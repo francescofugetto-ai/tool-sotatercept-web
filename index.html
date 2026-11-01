@@ -1,0 +1,761 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tool Sotatercept">
+<meta name="theme-color" content="#FAF9F7">
+<script data-iphone="sentinella">
+(function(){
+var h=document.documentElement, msg="";
+function ha(c){ return (" "+h.className+" ").indexOf(" "+c+" ")>=0; }
+// L'errore puo' arrivare prima che l'avviso esista — uno script in <head> che
+// non si lascia leggere —: il messaggio si tiene da parte e si scrive quando
+// la pagina c'e'.
+function scrivi(){
+  var e=document.getElementById("nmerr");
+  if(e&&msg) e.textContent="Errore del motore: "+msg;
+}
+function ko(m){
+  if(m&&!msg) msg=m;
+  if(!ha("motore-ko")) h.className+=" motore-ko";
+  scrivi();
+}
+h.className+=" js";
+window.onerror=function(m,src,riga,col){
+  m=String(m);
+  if(/^Script error\.?$/.test(m)) m="il browser non ne mostra il dettaglio (\u00abScript error.\u00bb)";
+  ko(m+(riga?" (riga "+riga+(col?", colonna "+col:"")+")":""));
+};
+document.addEventListener("DOMContentLoaded",function(){
+  if(!ha("motore-ok")) ko(msg||"il motore non ha completato l'avvio"); else scrivi();
+});
+})();
+</script>
+<title>Sotatercept — dose per peso e controllo prima di ogni somministrazione</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --bg:#FAF9F7; --surface:#FFFFFF; --surface-alt:#F3F2EF;
+    --border:rgba(11,11,11,0.10); --border-strong:rgba(11,11,11,0.18);
+    --text-primary:#0B0B0B; --text-secondary:#52514E; --text-muted:#76746F;
+    --accent-blue:#2A78D6;   --accent-blue-bg:#E6F1FB;   --accent-blue-border:#B5D4F4;
+    --accent-amber:#BA7517;  --accent-amber-bg:#FAEEDA;  --accent-amber-border:#FAC775;
+    --accent-red:#A32D2D;    --accent-red-bg:#FCEBEB;    --accent-red-border:#F7C1C1;
+    --accent-green:#3B6D11;  --accent-green-bg:#EAF3DE;  --accent-green-border:#C0DD97;
+    --k0:#2E7D4F; --k0-bg:#E2F3E8; --k0-bd:#A6D9B8;
+    --k1:#2A78D6; --k1-bg:#E3EFFB; --k1-bd:#A9CBF1;
+    --k3:#B45309; --k3-bg:#FDEBD8; --k3-bd:#F4BD85;
+    --k4:#A32D2D; --k4-bg:#FCE3E3; --k4-bd:#F0A9A9;
+    --grid:rgba(42,120,214,.08);
+    --font:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --display:'IBM Plex Sans Condensed','Arial Narrow',-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Consolas,'Courier New',monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#111418; --surface:#181C22; --surface-alt:#20252D;
+      --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19);
+      --text-primary:#E7EAEE; --text-secondary:#B8BEC7; --text-muted:#949BA5;
+      --accent-blue:#72AAEE;   --accent-blue-bg:#18283A;   --accent-blue-border:#2E4B6C;
+      --accent-amber:#E3A94F;  --accent-amber-bg:#30250F;  --accent-amber-border:#5D4719;
+      --accent-red:#EF8E8E;    --accent-red-bg:#361B1B;    --accent-red-border:#6B3232;
+      --accent-green:#95C873;  --accent-green-bg:#1C2A13;  --accent-green-border:#3C5626;
+      --k0:#8FD3A8; --k0-bg:#132B1D; --k0-bd:#2D5A3E;
+      --k1:#8EC0F5; --k1-bg:#16283C; --k1-bd:#2F5378;
+      --k3:#F3B27A; --k3-bg:#33210F; --k3-bd:#6B4524;
+      --k4:#F29A9A; --k4-bg:#361B1B; --k4-bd:#6B3232;
+      --grid:rgba(114,170,238,.07);
+      color-scheme:dark;
+    }
+  }
+  body { font-family:var(--font); background:var(--bg); color:var(--text-primary); font-size:14.5px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .page { max-width:960px; margin:0 auto; padding:0 16px 4rem; }
+  strong, b { font-weight:600; }
+  .hero { margin:0 -16px 0; padding:2.2rem 16px 1.3rem; border-bottom:1px solid var(--border);
+          background-color:var(--bg);
+          background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+          background-size:22px 22px; }
+  .kicker { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-blue); margin-bottom:8px; }
+  .headline { font-family:var(--display); font-size:30px; font-weight:700; line-height:1.12; margin-bottom:10px; }
+  .lede { font-size:14.5px; color:var(--text-secondary); max-width:760px; margin-bottom:12px; }
+  .lede strong { color:var(--text-primary); }
+  .meta-row { display:flex; flex-wrap:wrap; gap:6px 8px; font-size:12px; }
+  .meta-chip { background:var(--surface); border:1px solid var(--border-strong); border-radius:99px; padding:2px 10px; color:var(--text-secondary); overflow-wrap:anywhere; }
+  .meta-chip strong { color:var(--text-primary); }
+  .bar { position:-webkit-sticky;position:sticky; top:0; z-index:30; background:var(--bg); border-bottom:1px solid var(--border-strong);
+         margin:0 -16px 1.2rem; padding:8px 16px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+  .bar .lbl { font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .bar .sp { flex:1 1 auto; }
+  .btn { font:600 12.5px var(--font); padding:6px 13px; border-radius:99px; border:1px solid var(--border-strong); background:var(--surface); color:var(--text-secondary); cursor:pointer; }
+  .btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+  .stage { display:flex; align-items:baseline; gap:10px; margin:2rem 0 .7rem; padding-bottom:6px; border-bottom:2px solid var(--border-strong); }
+  .stage-n { font-family:var(--mono); font-size:12px; font-weight:600; color:#FFFFFF; background:var(--accent-blue); border-radius:6px; padding:1px 7px; }
+  .stage-t { font-family:var(--display); font-size:20px; font-weight:700; line-height:1.2; }
+  .stage-w { margin-left:auto; font-size:11.5px; color:var(--text-muted); text-align:right; }
+  .card { background:var(--surface); border:1px solid var(--border-strong); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .card h3 { font-size:13px; font-weight:600; letter-spacing:.02em; margin-bottom:8px; color:var(--text-secondary); }
+  .fl { font-size:12.5px; font-weight:600; color:var(--text-secondary); min-width:150px; }
+  .fl small { display:block; font-weight:400; color:var(--text-muted); font-size:11.5px; }
+  input[type=number] { font:500 15px var(--font); color:var(--text-primary); background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:6px 9px; width:92px; text-align:center; }
+  select { font:500 13.5px var(--font); color:var(--text-primary); background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:6px 8px; max-width:100%; min-width:0; }
+  .seg { display:inline-flex; flex-wrap:wrap; border:1px solid var(--border-strong); border-radius:10px; overflow:hidden; max-width:100%; }
+  .seg label { position:relative; cursor:pointer; }
+  .seg input { position:absolute; opacity:0; width:1px; height:1px; }
+  .seg span { display:block; padding:6px 12px; font-size:13.5px; font-weight:500; color:var(--text-secondary); border-right:1px solid var(--border); }
+  .seg label:last-child span { border-right:none; }
+  .seg input:checked + span { background:var(--text-primary); color:var(--bg); }
+  .seg input:focus-visible + span { outline:2px solid var(--accent-blue); outline-offset:-2px; }
+  .riga { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; padding:6px 0; border-bottom:1px dashed var(--border); }
+  .riga:last-child { border-bottom:none; }
+  .riga .fl { min-width:0; flex:1 1 180px; }
+  .riga select { flex:1 1 260px; }
+  .hide { display:none !important; }
+  .esito { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-bottom:4px; }
+  .cat { display:inline-block; font-size:12.5px; font-weight:600; border-radius:99px; padding:2px 10px; border:1px solid; }
+  .k0 { color:var(--k0); background:var(--k0-bg); border-color:var(--k0-bd); }
+  .k1 { color:var(--k1); background:var(--k1-bg); border-color:var(--k1-bd); }
+  .k3 { color:var(--k3); background:var(--k3-bg); border-color:var(--k3-bd); }
+  .k4 { color:var(--k4); background:var(--k4-bg); border-color:var(--k4-bd); }
+  .kx { color:var(--text-muted); background:var(--surface-alt); border-color:var(--border-strong); }
+  .big { font-family:var(--display); font-size:21px; font-weight:700; line-height:1.15; }
+  .pg { font-family:var(--mono); font-size:11px; color:var(--text-muted); }
+  .nota { border-left:3px solid var(--accent-amber); background:var(--accent-amber-bg); border-radius:0 8px 8px 0; padding:7px 11px; margin-top:8px; font-size:13.5px; }
+  .nota.info { border-left-color:var(--accent-blue); background:var(--accent-blue-bg); }
+  .nota.stop { border-left-color:var(--accent-red); background:var(--accent-red-bg); }
+  .nota.ok { border-left-color:var(--accent-green); background:var(--accent-green-bg); }
+  .nota.spenta { border-left-color:var(--border-strong); background:var(--surface-alt); color:var(--text-secondary); }
+  .nota strong { color:var(--text-primary); }
+  .passo { display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed var(--border); }
+  .passo:last-child { border-bottom:none; }
+  .passo .ico { flex:0 0 26px; font-weight:700; text-align:center; font-family:var(--mono); font-size:13px; padding-top:1px; color:var(--accent-blue); }
+  .passo .tx { flex:1 1 auto; font-size:14px; min-width:0; overflow-wrap:anywhere; }
+  .chk { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14px; line-height:1.45; border-bottom:1px dashed var(--border); cursor:pointer; }
+  .chk:last-child { border-bottom:none; }
+  .chk input { margin-top:3px; width:17px; height:17px; flex:0 0 auto; accent-color:var(--accent-blue); }
+  .chk small { display:block; color:var(--text-muted); font-size:12px; }
+  .chk .tx { flex:1 1 auto; min-width:0; }
+  .chk.on .tx { color:var(--text-primary); font-weight:500; }
+  .lista li { margin:4px 0 4px 18px; font-size:13.5px; }
+  .vv { font-family:var(--mono); font-size:12px; color:var(--text-muted); }
+  .num { font-family:var(--display); font-size:17px; font-weight:700; }
+  .tab { width:100%; border-collapse:collapse; font-size:13px; margin-top:4px; }
+  .tab th, .tab td { text-align:left; padding:5px 6px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .tab th { font-size:11.5px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em; }
+  .tab td.n { font-family:var(--mono); white-space:nowrap; }
+  .tab tr.on td { background:var(--accent-blue-bg); font-weight:600; }
+  details.pieg { margin-top:8px; font-size:13.5px; }
+  details.pieg summary { cursor:pointer; font-weight:600; color:var(--text-secondary); }
+  .foot { margin-top:2.4rem; padding-top:1rem; border-top:1px solid var(--border-strong); font-size:12px; color:var(--text-muted); line-height:1.7; }
+  .foot strong { color:var(--text-secondary); }
+  @media (max-width:640px) {
+    .page { overflow-wrap:anywhere; }
+    .headline { font-size:25px; }
+    .stage-w { display:none; }
+    .fl { min-width:0; width:100%; }
+    .big { font-size:19px; }
+  }
+  @media print { .bar { position:static; } }
+</style>
+<style data-iphone="stile">
+/* L'avviso e' visibile per costruzione: lo nasconde solo la classe che la
+   sentinella mette quando JavaScript esiste, e lo rimostra quando il motore
+   muore. Nell'anteprima dell'iPhone nessuna delle due arriva. */
+#nomotore{background:#FCEBEB;border:1.5px solid #A32D2D;border-radius:10px;
+ padding:12px 15px;margin:0 0 1.1rem;font-size:13.5px;line-height:1.6;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+#nomotore strong{display:block;color:#A32D2D;font-size:15px;margin-bottom:4px}
+#nomotore p{margin:6px 0 0}
+#nomotore a{color:#A32D2D}
+#nomotore .nmurl{font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:.92em;word-break:break-all}
+#nomotore .nmerr{display:block;font-family:'SFMono-Regular',Consolas,Menlo,monospace;
+ font-size:11.5px;color:#A32D2D;margin-top:6px;word-break:break-word}
+#nomotore .nmerr:empty{display:none}
+html.js #nomotore{display:none}
+html.js.motore-ko #nomotore{display:block}
+
+#nmprivacy{background:#E2F4F5;border:1px solid #A7DBDE;border-radius:8px;padding:9px 13px;
+ margin:0 0 1rem;font-size:12.5px;line-height:1.55;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+@media print{#nmprivacy{display:none}}
+</style>
+</head>
+<body>
+<div class="nomotore" id="nomotore" role="alert">
+ <strong>Motore di calcolo non attivo</strong>
+ <p>I calcoli, i filtri e i comandi di questa pagina <b>non funzionano</b>: dove leggi «—» non c'è un
+ valore. Il testo resta leggibile, i numeri che dipendono dai tuoi dati no. Non usare questa pagina
+ per decidere una dose.</p>
+ <p>Su iPhone e iPad succede sempre con un file salvato sul telefono: si apre nell'<b>anteprima</b> —
+ dall'app File, da Mail, da WhatsApp —, che mostra la pagina ma non esegue il motore, e Apple non
+ permette di aprirlo in Safari. Sull'iPhone il tool funziona aperto da questo indirizzo, in Safari: <a class="nmurl" href="https://francescofugetto-ai.github.io/tool-sotatercept-web/">https://francescofugetto-ai.github.io/tool-sotatercept-web/</a> — poi Condividi, «Aggiungi alla schermata Home». Dopo la prima apertura funziona anche senza rete. Su computer e Android basta aprire il file.</p>
+ <span class="nmerr" id="nmerr"></span>
+</div>
+<div class="nmprivacy" id="nmprivacy">
+ <b>Quello che scrivi resta su questo dispositivo.</b> La pagina non invia niente in rete e non
+ salva niente: nessun dato esce da qui. Per la stessa ragione, <b>chiudendola il contenuto si
+ perde</b> — copia il referto dove ti serve prima di chiudere.
+</div>
+<div class="page">
+<header class="hero">
+  <div class="kicker">Strumento · Ipertensione arteriosa polmonare · scheda tecnica di sotatercept e ERS 2026</div>
+  <h1 class="headline">Sotatercept — si dà oggi? Con che dose, in che volume</h1>
+  <p class="lede"><strong>Come si usa.</strong> Il passo 1 dice se il paziente è nell'indicazione. Il passo 2 dice a che punto è il trattamento e il peso: da lì la <strong>dose (0,3 o 0,7 mg/kg)</strong> e il <strong>volume della scheda</strong>. Il passo 3 porta emoglobina e piastrine: dai quattro criteri della scheda esce <strong>somministrare o posticipare di 3 settimane</strong>. Il passo 4 porta rene (in eGFR, come la scheda), fegato, gravidanza e i farmaci che alzano il rischio di sanguinare. Un campo che decide se la dose esiste, se manca, dà «—» con la ragione. Lo somministra il centro, o chi il centro ha addestrato. <strong>Azzera</strong>, in alto, ricomincia.</p>
+  <div class="meta-row">
+    <span class="meta-chip"><strong>Dose e criteri</strong> scheda tecnica di sotatercept, EMA, testo dell'11/06/2026, § 4.2, Tab. 1 e 2</span>
+    <span class="meta-chip"><strong>Indicazione</strong> ERS 2026 (GRADE), PICO 1 p. 10 e PICO 2 p. 14 · Tab. 2 pp. 29–30</span>
+    <span class="meta-chip"><strong>ESC/ERS 2022</strong> solo un farmaco in fase 3, p. 3674: nessuna classe</span>
+    <span class="meta-chip"><strong>In Italia</strong> in commercio (Banca dati AIFA, 27/10/2026)</span>
+  </div>
+</header>
+
+<div class="bar" id="bar" aria-live="polite">
+  <span class="lbl">Oggi</span> <span id="barEsito" class="cat kx">—</span>
+  <span class="lbl">Dose</span> <span id="barDose" class="cat kx">—</span>
+  <span class="lbl">Volume</span> <span id="barVol" class="cat kx">—</span>
+  <span class="sp"></span>
+  <button class="btn" id="azzera" type="button">Azzera</button>
+</div>
+
+<div class="stage"><span class="stage-n">1</span><span class="stage-t">L'indicazione</span><span class="stage-w">scheda § 4.1 · ERS 2026, pp. 10, 14</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Età<small>sotto i 18 anni la scheda non ha dati: nessuna dose</small></span><input type="number" id="eta" min="0" max="110" step="1" inputmode="numeric" placeholder="anni"><span class="vv" id="vEta">—</span></div>
+  <div class="riga"><span class="fl">Forma di ipertensione polmonare<small>la scheda indica la sola PAH</small></span>
+    <select id="forma">
+      <option value="">— scegli —</option>
+      <option value="ihd">PAH idiopatica, ereditaria o da farmaci</option>
+      <option value="ctd">PAH da connettivopatia</option>
+      <option value="chd">PAH da cardiopatia congenita</option>
+      <option value="hiv">PAH da HIV</option>
+      <option value="port">PAH da ipertensione portale</option>
+      <option value="schi">PAH da schistosomiasi</option>
+      <option value="pvod">Malattia veno-occlusiva polmonare</option>
+      <option value="altro">Non è una PAH: gruppi 2, 3, 4 (CTEPH), 5</option>
+    </select></div>
+  <div class="riga"><span class="fl">Prende altri farmaci della PAH<small>la scheda lo indica solo in associazione</small></span>
+    <span class="seg">
+      <label><input type="radio" name="altri" value="si"><span>sì</span></label>
+      <label><input type="radio" name="altri" value="no"><span>no</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Classe funzionale OMS<small>la scheda indica II, III e IV</small></span>
+    <span class="seg">
+      <label><input type="radio" name="fc" value="1"><span>I</span></label>
+      <label><input type="radio" name="fc" value="2"><span>II</span></label>
+      <label><input type="radio" name="fc" value="3"><span>III</span></label>
+      <label><input type="radio" name="fc" value="4"><span>IV</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Rischio al follow-up, a quattro strati<small>lo strato lo calcola il Tool Rischio PAH; non cambia la dose, ma alla prima dose senza strato non c'è esito</small></span>
+    <span class="seg">
+      <label><input type="radio" name="rischio" value="b"><span>basso</span></label>
+      <label><input type="radio" name="rischio" value="ib"><span>intermedio-basso</span></label>
+      <label><input type="radio" name="rischio" value="ia"><span>intermedio-alto</span></label>
+      <label><input type="radio" name="rischio" value="a"><span>alto</span></label>
+    </span></div>
+  <div id="outInd" style="margin-top:6px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">2</span><span class="stage-t">A che punto è, e quanto pesa</span><span class="stage-w">scheda § 4.2, Tab. 1 e 2</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Dosi già fatte<small>0 = oggi sarebbe la prima</small></span><input type="number" id="fatte" min="0" max="500" step="1" inputmode="numeric" placeholder="n."><span class="vv" id="vFatte">—</span></div>
+  <div class="riga" id="rigaSett"><span class="fl">Settimane dall'ultima dose<small>la scheda dà una dose ogni 3 settimane</small></span><input type="number" id="sett" min="0" max="500" step="0.5" inputmode="decimal" placeholder="sett."><span class="vv" id="vSett">—</span></div>
+  <label class="chk hide" id="rigaPiastPausa"><input type="checkbox" id="pausaPiastrine"><span class="tx">La pausa è dovuta a piastrine costantemente &lt; 50 × 10⁹/L<small>prima di riprendere la scheda chiede di rivalutare beneficio e rischio</small></span></label>
+  <div class="riga"><span class="fl">Peso<small>reale, in kg: le tabelle della scheda vanno al decimo</small></span><input type="number" id="peso" min="2" max="300" step="0.1" inputmode="decimal" placeholder="kg"><span class="vv" id="vPeso">—</span></div>
+  <div id="outDose" style="margin-top:6px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">3</span><span class="stage-t">Emoglobina e piastrine</span><span class="stage-w">scheda § 4.2, 4.4</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Emoglobina di oggi<small>g/dL. Dopo le prime 5 dosi la scheda la vuole ogni 3–6 mesi: qui l'ultimo controllo</small></span><input type="number" id="hb" min="3" max="25" step="0.1" inputmode="decimal" placeholder="g/dL"><span class="vv" id="vHb">—</span></div>
+  <div class="riga" id="rigaPrec"><span class="fl">Emoglobina alla dose precedente<small>alla 2ª dose è il basale: si può lasciare vuota</small></span><input type="number" id="hbPrec" min="3" max="25" step="0.1" inputmode="decimal" placeholder="g/dL"></div>
+  <div class="riga" id="rigaBase"><span class="fl">Emoglobina basale<small>prima della prima dose</small></span><input type="number" id="hbBase" min="3" max="25" step="0.1" inputmode="decimal" placeholder="g/dL"></div>
+  <div class="riga"><span class="fl">Limite superiore della norma (ULN)<small>g/dL, quello del laboratorio</small></span><input type="number" id="uln" min="10" max="22" step="0.1" inputmode="decimal" placeholder="g/dL"></div>
+  <div class="riga"><span class="fl">Piastrine<small>× 10⁹/L</small></span><input type="number" id="plt" min="0" max="2000" step="1" inputmode="numeric" placeholder="× 10⁹/L"></div>
+  <label class="chk" id="chkSang"><input type="checkbox" id="sang"><span class="tx">Evento di sanguinamento grave<small>in corso o recente: la scheda dice che non va somministrato, senza dire per quanto</small></span></label>
+  <div id="outCrit" style="margin-top:6px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">4</span><span class="stage-t">Rene, fegato, gravidanza, farmaci</span><span class="stage-w">scheda § 4.2, 4.4, 4.6, 5.2</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">eGFR<small>mL/min/1,73 m². La soglia della scheda è in eGFR: non si converte in clearance</small></span><input type="number" id="egfr" min="1" max="200" step="1" inputmode="numeric" placeholder="eGFR"><span class="vv" id="vEgfr">—</span></div>
+  <label class="chk" id="chkDial"><input type="checkbox" id="dialisi"><span class="tx">In dialisi<small>la scheda non ha uno schema per chi è in dialisi</small></span></label>
+  <div class="riga"><span class="fl">Compromissione epatica<small>la scheda ragiona in classi di Child-Pugh</small></span>
+    <span class="seg">
+      <label><input type="radio" name="cp" value="0"><span>nessuna</span></label>
+      <label><input type="radio" name="cp" value="A"><span>A</span></label>
+      <label><input type="radio" name="cp" value="B"><span>B</span></label>
+      <label><input type="radio" name="cp" value="C"><span>C</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Gravidanza e allattamento</span>
+    <select id="preg">
+      <option value="">— scegli —</option>
+      <option value="np">non pertinente (uomo, o donna non fertile)</option>
+      <option value="con">età fertile, con contraccezione efficace</option>
+      <option value="senza">età fertile, senza contraccezione</option>
+      <option value="gr">in gravidanza</option>
+      <option value="all">allatta</option>
+    </select></div>
+  <label class="chk" id="chkPgi"><input type="checkbox" id="pgi"><span class="tx">Prostaciclina in infusione<small>epoprostenolo o treprostinil in pompa: più piastrinopenia e più sanguinamenti</small></span></label>
+  <label class="chk" id="chkAt"><input type="checkbox" id="at"><span class="tx">Anticoagulante o antiaggregante</span></label>
+  <div id="outRene" style="margin-top:6px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">→</span><span class="stage-t">Che cosa fare oggi</span><span class="stage-w">ogni riga con la sua fonte</span></div>
+<div class="card" id="cardEsito"><div id="outEsito"></div></div>
+<div class="card"><h3>Prossimo appuntamento e controlli</h3><div id="outPoi"></div></div>
+<div class="card"><h3>Le tabelle dei volumi della scheda</h3><div id="outTab"></div></div>
+<div class="card"><h3>Dove le fonti non combaciano</h3><div id="outInc"></div></div>
+<div class="card"><h3>Limiti per questo paziente</h3><ul class="lista" id="limiti"></ul></div>
+
+<div class="foot">
+  <strong>Fonte.</strong> Scheda tecnica di sotatercept, EMA, testo dell'11/06/2026, autorizzato in UE il 22/08/2024, letta il 27/10/2026 (§ 4.1 indicazione; § 4.2 posologia, Tab. 1 e 2, posticipo, rene, fegato, bambino; § 4.3 controindicazioni; § 4.4 avvertenze; § 4.5 interazioni; § 4.6 gravidanza; § 5.2 farmacocinetica); disponibilità dalla Banca dati farmaci AIFA, 27/10/2026. Linea guida ERS 2026 sulla terapia della PAH (GRADE; pagina del PDF): PICO 1 p. 10, limiti e dati mancanti p. 14, PICO 2 p. 14, Tab. 2 pp. 29–30. 2022 ESC/ERS Guidelines for the diagnosis and treatment of pulmonary hypertension, <em>Eur Heart J</em> 2022;43:3618–3731: p. 3674, dove il farmaco è solo in fase 3. Ogni numero mostrato porta la sua fonte.<br><br>
+  Strumento personale di studio e consultazione: <strong>non sostituisce il centro per l'ipertensione polmonare né la scheda tecnica</strong>. Calcola una dose per il paziente e la legge dalle tabelle della scheda. Non salva i dati e non li invia in rete.
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  /* ═══ DATI ═══════════════════════════════════════════════════════════════
+     Scheda tecnica di sotatercept, EMA, testo dell'11/06/2026 (guardate come
+     immagine le pp. 3-4 del PDF, tabelle e criteri, il 01/11/2026):
+     Tab. 1, § 4.2 — volume per la dose di 0,3 mg/kg: da 30,0 a 180,0 kg.
+     Tab. 2, § 4.2 — volume per la dose di 0,7 mg/kg: da 30,0 kg a «167,5 o superiore».
+     Soluzione ricostituita 50 mg/mL (nota delle due tabelle).
+     § 4.2 — posticipo di 3 settimane con uno qualsiasi dei quattro criteri; posticipo
+       > 9 settimane: si riparte da 0,3 mg/kg; se è per piastrine costantemente < 50:
+       rivalutare beneficio e rischio; Hb e piastrine prima di ciascuna delle prime 5
+       dosi, poi ogni 3-6 mesi.
+     § 4.2 — rene: nessun aggiustamento, eGFR < 30 dati limitati; dialisi: nessuno schema.
+     § 4.2 — fegato: nessun aggiustamento da A a C, ma «non è stato studiato».
+     § 4.3 — piastrine costantemente < 50 prima di iniziare: controindicato.
+     § 4.4 — sanguinamento grave: non va somministrato; studi senza HIV, portale,
+       schistosomiasi, PVOD. § 4.6 — gravidanza, contraccezione, allattamento (4 mesi).
+     ERS 2026, p. 10 (PICO 1), p. 14 (PICO 2), Tab. 2 pp. 29-30. ESC/ERS 2022, p. 3674. */
+  var FONTE = {
+    s42:"scheda tecnica di sotatercept, EMA, testo dell'11/06/2026, § 4.2",
+    s41:"scheda tecnica di sotatercept, § 4.1",
+    s43:"scheda tecnica di sotatercept, § 4.3",
+    s44:"scheda tecnica di sotatercept, § 4.4",
+    s46:"scheda tecnica di sotatercept, § 4.6",
+    s48:"scheda tecnica di sotatercept, § 4.8",
+    s52:"scheda tecnica di sotatercept, § 5.2",
+    e10:"ERS 2026, p. 10", e14:"ERS 2026, p. 14", e29:"ERS 2026, Tab. 2, pp. 29–30", c74:"ESC/ERS 2022, p. 3674"
+  };
+  var K45 = "1 flaconcino da 45 mg", K60 = "1 flaconcino da 60 mg", K245 = "2 flaconcini da 45 mg", K260 = "2 flaconcini da 60 mg";
+  var VOL03 = [ // Tab. 1, § 4.2
+    [30.0, 40.8, 0.2, K45], [40.9, 57.4, 0.3, K45], [57.5, 74.1, 0.4, K45], [74.2, 90.8, 0.5, K45],
+    [90.9, 107.4, 0.6, K45], [107.5, 124.1, 0.7, K45], [124.2, 140.8, 0.8, K45], [140.9, 157.4, 0.9, K45],
+    [157.5, 174.1, 1.0, K60], [174.2, 180.0, 1.1, K60]
+  ];
+  var VOL07 = [ // Tab. 2, § 4.2 (l'ultima riga è «167,5 o superiore»)
+    [30.0, 31.7, 0.4, K45], [31.8, 38.9, 0.5, K45], [39.0, 46.0, 0.6, K45], [46.1, 53.2, 0.7, K45], [53.3, 60.3, 0.8, K45], [60.4, 67.4, 0.9, K45],
+    [67.5, 74.6, 1.0, K60], [74.7, 81.7, 1.1, K60], [81.8, 88.9, 1.2, K60],
+    [89.0, 96.0, 1.3, K245], [96.1, 103.2, 1.4, K245], [103.3, 110.3, 1.5, K245], [110.4, 117.4, 1.6, K245], [117.5, 124.6, 1.7, K245], [124.7, 131.7, 1.8, K245],
+    [131.8, 138.9, 1.9, K260], [139.0, 146.0, 2.0, K260], [146.1, 153.2, 2.1, K260], [153.3, 160.3, 2.2, K260], [160.4, 167.4, 2.3, K260], [167.5, Infinity, 2.4, K260]
+  ];
+  var SOGLIE = {
+    conc:50,        // mg/mL, nota delle Tab. 1 e 2
+    hbPrec:2,       // g/dL, > 2 dalla dose precedente e sopra ULN, § 4.2
+    hbBase:4,       // g/dL, > 4 dal basale, § 4.2
+    hbUln:2,        // g/dL, > 2 sopra ULN, § 4.2
+    plt:50,         // × 10⁹/L, < 50, § 4.2, 4.3
+    intervallo:3,   // settimane, § 4.2
+    pausa:9,        // settimane, > 9 si riparte da 0,3 mg/kg, § 4.2
+    pesoMin:30,     // kg, le tabelle cominciano qui
+    pesoMax03:180,  // kg, la Tab. 1 finisce qui
+    adulto:18,      // anni, § 4.2
+    egfr:30,        // mL/min/1,73 m², § 4.2
+    eta65:65,       // anni, § 4.4
+    calo:2          // g/dL dalla dose precedente: taglio NOSTRO per la sola nota sul calo, decisione del medico, 01/11/2026
+  };
+  var DOM = { eta:[0,110], fatte:[0,500], sett:[0,500], peso:[2,300], hb:[3,25], uln:[10,22], plt:[0,2000], egfr:[1,200] };
+
+  /* ═══ FUNZIONI PURE ═════════════════════════════════════════════════════ */
+  function inScala(v, k) { return v !== null && v !== undefined && !isNaN(v) && v >= DOM[k][0] && v <= DOM[k][1]; }
+  function d2(x) { return Math.round(x * 100) / 100; }     // le differenze fra emoglobine, senza i resti della virgola mobile
+  function nf(x, d) { if (d === undefined) d = 1; var p = Math.pow(10, d); x = Math.round(x * p) / p; return String(x).replace(".", ","); }
+  function nv(x) { return nf(x, 1).indexOf(",") < 0 ? nf(x, 1) + ",0" : nf(x, 1); }
+
+  function volume(mgkg, peso) {
+    if (peso === null || peso === undefined || isNaN(peso)) return null;
+    var p = Math.round(peso * 10) / 10, T = mgkg === 0.3 ? VOL03 : VOL07, i;
+    for (i = 0; i < T.length; i++) if (p >= T[i][0] && p <= T[i][1]) return { lo:T[i][0], hi:T[i][1], ml:T[i][2], kit:T[i][3], mgVol:d2(T[i][2] * SOGLIE.conc), p:p };
+    return null;
+  }
+
+  // I quattro criteri di § 4.2. Ognuno: «si», «no», «nv» (non valutabile, con la ragione) o «na».
+  function criteri(s) {
+    var c = [], hb = inScala(s.hb, "hb") ? s.hb : null, uln = inScala(s.uln, "uln") ? s.uln : null,
+        base = inScala(s.hbBase, "hb") ? s.hbBase : null, prec = inScala(s.hbPrec, "hb") ? s.hbPrec : null,
+        plt = inScala(s.plt, "plt") ? s.plt : null, prima = s.fatte === 0;
+    if (s.fatte === 1 && prec === null) prec = base;   // alla 2ª dose la precedente è la prima: il suo valore è il basale
+    function voce(id, t, st, perche) { c.push({ id:id, t:t, st:st, perche:perche || "" }); }
+
+    if (prima) voce("c1", "Hb salita di &gt; 2 g/dL dalla dose precedente e sopra l'ULN", "na", "prima dose: non c'è una dose precedente");
+    else {
+      var d1 = (hb !== null && prec !== null) ? d2(hb - prec) : null;
+      var soprau = (hb !== null && uln !== null) ? hb > uln : null;
+      if (d1 !== null && d1 <= SOGLIE.hbPrec) voce("c1", "Hb salita di &gt; 2 g/dL dalla dose precedente e sopra l'ULN", "no", "differenza " + nf(d1, 2) + " g/dL");
+      else if (soprau === false) voce("c1", "Hb salita di &gt; 2 g/dL dalla dose precedente e sopra l'ULN", "no", "non è sopra l'ULN");
+      else if (d1 === null || soprau === null) voce("c1", "Hb salita di &gt; 2 g/dL dalla dose precedente e sopra l'ULN", "nv", "servono Hb di oggi, Hb della dose precedente e ULN");
+      else voce("c1", "Hb salita di &gt; 2 g/dL dalla dose precedente e sopra l'ULN", "si", "differenza " + nf(d1, 2) + " g/dL, e sopra l'ULN");
+    }
+
+    if (prima) voce("c2", "Hb salita di &gt; 4 g/dL dal basale", "na", "prima dose: oggi è il basale");
+    else if (hb === null || base === null) voce("c2", "Hb salita di &gt; 4 g/dL dal basale", "nv", "servono Hb di oggi e Hb basale");
+    else voce("c2", "Hb salita di &gt; 4 g/dL dal basale", d2(hb - base) > SOGLIE.hbBase ? "si" : "no", "differenza " + nf(d2(hb - base), 2) + " g/dL");
+
+    if (hb === null || uln === null) voce("c3", "Hb oltre 2 g/dL sopra l'ULN", "nv", "servono Hb di oggi e ULN");
+    else voce("c3", "Hb oltre 2 g/dL sopra l'ULN", d2(hb - uln) > SOGLIE.hbUln ? "si" : "no", "Hb − ULN = " + nf(d2(hb - uln), 2) + " g/dL");
+
+    if (plt === null) voce("c4", "piastrine &lt; 50 × 10⁹/L", "nv", "servono le piastrine");
+    else voce("c4", "piastrine &lt; 50 × 10⁹/L", plt < SOGLIE.plt ? "si" : "no", plt + " × 10⁹/L");
+    return c;
+  }
+
+  function decidi(s) {
+    var r = { esito:"manca", blocchi:[], manca:[], crit:[], dose:null, mgkg:null, centri:[], rip:false, grigio:false, ped:false, avvisi:[], prima:s.fatte === 0, fuoriForma:false };
+
+    /* età: decide se la dose esiste */
+    if (s.eta === null || s.eta === undefined) r.manca.push("età");
+    else if (!inScala(s.eta, "eta")) r.manca.push("età nella scala (0–110 anni)");
+    else if (s.eta < SOGLIE.adulto) {
+      r.ped = true;
+      r.blocchi.push("<b>Sotto i 18 anni nessuna dose, decide lo specialista.</b> La scheda: sicurezza ed efficacia «non sono state stabilite. Non ci sono dati disponibili» (" + FONTE.s42 + "). Gli studi nel bambino sono in corso (" + FONTE.e14 + "). Non lo nomina la Tab. 22 della ESC/ERS 2022, p. 3684.");
+      r.esito = "no"; return r;
+    }
+    if (s.forma === "altro") {
+      r.fuoriForma = true;
+      r.blocchi.push("<b>Nessuna dose: non è una PAH.</b> La scheda indica la PAH dell'adulto (" + FONTE.s41 + "); non ha né la CTEPH né gli altri gruppi, e nemmeno la ERS 2026, che si occupa della sola PAH.");
+      r.esito = "no"; return r;
+    }
+
+    if (!s.forma) r.manca.push("forma di ipertensione polmonare");
+
+    /* il trattamento: la dose */
+    if (s.fatte === null || s.fatte === undefined) r.manca.push("quante dosi ha già fatto");
+    else if (!inScala(s.fatte, "fatte") || Math.floor(s.fatte) !== s.fatte) r.manca.push("dosi già fatte, un numero intero da 0");
+    var fatteOk = inScala(s.fatte, "fatte") && Math.floor(s.fatte) === s.fatte;
+    var presto = false;
+    if (fatteOk && s.fatte >= 1) {
+      if (s.sett === null || s.sett === undefined) r.manca.push("settimane dall'ultima dose");
+      else if (!inScala(s.sett, "sett")) r.manca.push("settimane dall'ultima dose nella scala");
+      else {
+        if (s.sett < SOGLIE.intervallo) presto = true;
+        if (s.sett > SOGLIE.pausa) { r.rip = true; r.grigio = s.sett <= SOGLIE.pausa + SOGLIE.intervallo; }
+      }
+    }
+    if (fatteOk) r.mgkg = (s.fatte === 0 || r.rip) ? 0.3 : 0.7;
+    else r.mgkg = null;
+
+    /* in associazione */
+    if (!s.altri) r.manca.push("se prende altri farmaci della PAH");
+    else if (s.altri === "no") r.blocchi.push("<b>Nessuna dose: senza altri farmaci della PAH è fuori indicazione.</b> La scheda lo indica in associazione (" + FONTE.s41 + "); per iniziarlo in chi non è mai stato trattato i dati mancano (" + FONTE.e14 + ").");
+
+    /* classe OMS */
+    if (fatteOk && s.fatte === 0) {
+      if (!s.fc) r.manca.push("classe funzionale OMS");
+      else if (s.fc === "1") r.blocchi.push("<b>Nessuna dose: classe OMS I.</b> La scheda indica le classi II, III e IV (" + FONTE.s41 + ").");
+    } else if (s.fc === "1") r.avvisi.push("<b>Classe OMS I durante il trattamento.</b> La scheda indica le classi II–IV (" + FONTE.s41 + ") e non dice che cosa fare in chi ci arriva in terapia: decide il centro.");
+
+    /* alla prima dose lo strato decide fra «somministrare» e «decide il centro»: vuoto non vale «non basso» */
+    if (fatteOk && s.fatte === 0 && !s.rischio) r.manca.push("strato di rischio al follow-up");
+
+    /* sanguinamento grave */
+    if (s.sang) r.blocchi.push("<b>Sanguinamento grave: non va somministrato</b> (" + FONTE.s44 + "). In anticoagulante: ripensare l'anticoagulante sul rapporto rischio-beneficio; nei casi gravi, sospensione temporanea o definitiva (" + FONTE.e29 + ").");
+
+    /* gravidanza */
+    if (!s.preg) r.manca.push("gravidanza e allattamento");
+    else if (s.preg === "gr" || s.preg === "senza") r.blocchi.push("<b>Non raccomandato</b> in gravidanza e nelle donne in età fertile che non usano misure contraccettive (" + FONTE.s46 + "): nessuna dose, decide lo specialista.");
+    else if (s.preg === "all") r.blocchi.push("<b>Allattamento: va interrotto</b> durante il trattamento e per 4 mesi dopo l'ultima dose (" + FONTE.s46 + "): nessuna dose finché allatta.");
+
+    /* S1: a chi è già in terapia «decide il centro» non deve suonare come una sospensione */
+    var nonSosp = fatteOk && s.fatte >= 1 ? " <b>Questa riga non vuol dire sospendere:</b> se proseguire lo decide il centro." : "";
+
+    /* fegato: la scheda scrive «nessun aggiustamento» e «non studiato» (S1, decisione del medico, 01/11/2026) */
+    if (!s.cp) r.manca.push("compromissione epatica");
+    else if (s.cp !== "0") r.centri.push("<b>Child-Pugh " + s.cp + ": decide il centro.</b> La scheda scrive che da A a C non serve alcun aggiustamento, e subito dopo che il farmaco «non è stato studiato» in questi pazienti (" + FONTE.s42 + "); non si prevede un effetto sul metabolismo, che è un catabolismo cellulare (" + FONTE.s52 + ")." + nonSosp);
+
+    /* dialisi */
+    if (s.dialisi) r.centri.push("<b>Dialisi: decide il centro.</b> La scheda non ha uno schema per chi è in dialisi: dice nessun aggiustamento in caso di compromissione renale e dati limitati sotto eGFR 30 (" + FONTE.s42 + "), farmacocinetica paragonabile nella nefropatia terminale non-PAH, e che il farmaco non è dializzabile (" + FONTE.s52 + ")." + nonSosp);
+
+    /* S5: forme escluse dagli studi. Alla prima dose decide il centro; a chi è già in terapia resta com'è */
+    var FORME = { hiv:"PAH da HIV", port:"PAH da ipertensione portale", schi:"PAH da schistosomiasi", pvod:"Malattia veno-occlusiva polmonare" };
+    if (fatteOk && s.fatte === 0 && FORME[s.forma]) r.centri.push("<b>" + FORME[s.forma] + ", prima dose: decide il centro.</b> Questa forma non era negli studi clinici (" + FONTE.s44 + "), e la ERS 2026 chiede altri dati (" + FONTE.e14 + "). La scheda non la controindica.");
+
+    /* peso e volume */
+    if (s.peso === null || s.peso === undefined) r.manca.push("peso");
+    else if (!inScala(s.peso, "peso")) r.manca.push("peso nella scala (2–300 kg)");
+    else {
+      var pa = Math.round(s.peso * 10) / 10;
+      if (s.peso < SOGLIE.pesoMin) r.blocchi.push("<b>Sotto 30 kg nessun volume, decide lo specialista.</b> Le tabelle della scheda cominciano a 30,0 kg (" + FONTE.s42 + ", Tab. 1 e 2).");
+      else if (r.mgkg === 0.3 && s.peso > SOGLIE.pesoMax03) r.blocchi.push("<b>Oltre 180 kg nessun volume per la dose di 0,3 mg/kg, decide lo specialista.</b> La Tab. 1 finisce a 180,0 kg (" + FONTE.s42 + ").");
+      if (r.mgkg !== null) {
+        var v = volume(r.mgkg, s.peso);
+        r.dose = { mg:d2(r.mgkg * pa), v:v, p:pa };
+      }
+    }
+
+    /* i criteri */
+    if (fatteOk) {
+      r.crit = criteri(s);
+      if (s.hb === null || s.hb === undefined) r.manca.push("emoglobina di oggi");
+      else if (!inScala(s.hb, "hb")) r.manca.push("emoglobina nella scala (3–25 g/dL)");
+      if (s.uln === null || s.uln === undefined) r.manca.push("limite superiore della norma");
+      else if (!inScala(s.uln, "uln")) r.manca.push("limite superiore nella scala (10–22 g/dL)");
+      if (s.plt === null || s.plt === undefined) r.manca.push("piastrine");
+      else if (!inScala(s.plt, "plt")) r.manca.push("piastrine nella scala");
+      if (s.fatte >= 1) {
+        if (s.hbBase === null || s.hbBase === undefined) r.manca.push("emoglobina basale");
+        else if (!inScala(s.hbBase, "hb")) r.manca.push("emoglobina basale nella scala (3–25 g/dL)");
+        if (s.fatte >= 2) {
+          if (s.hbPrec === null || s.hbPrec === undefined) r.manca.push("emoglobina alla dose precedente");
+          else if (!inScala(s.hbPrec, "hb")) r.manca.push("emoglobina precedente nella scala (3–25 g/dL)");
+        }
+      }
+    }
+    if (r.prima && inScala(s.hb, "hb") && inScala(s.uln, "uln") && s.hb > s.uln) r.avvisi.push("<b>Hb sopra l'ULN alla prima dose:</b> la scheda chiede cautela nei pazienti con eritrocitosi a rischio tromboembolico aumentato (" + FONTE.s44 + ").");
+    /* S6: la scheda guarda l'aumento e non il calo. Nota nostra, l'esito non cambia */
+    if (fatteOk && s.fatte >= 1 && inScala(s.hb, "hb")) {
+      var hbPr = inScala(s.hbPrec, "hb") ? s.hbPrec : (s.fatte === 1 && inScala(s.hbBase, "hb") ? s.hbBase : null);
+      if (hbPr !== null && d2(hbPr - s.hb) >= SOGLIE.calo) r.avvisi.push("<b>Hb scesa di " + nf(d2(hbPr - s.hb), 2) + " g/dL dalla dose precedente.</b> Un calo importante fa cercare un sanguinamento prima della dose. La nota è nostra, e nostro è il taglio di " + SOGLIE.calo + " g/dL: la scheda non ha un criterio per il calo. L'esito non cambia.");
+    }
+    var scatta = [], i;
+    for (i = 0; i < r.crit.length; i++) if (r.crit[i].st === "si") scatta.push(r.crit[i]);
+    r.scatta = scatta;
+
+    /* l'esito: il più grave vince; un criterio che scatta basta, anche se altri campi mancano */
+    if (r.blocchi.length) r.esito = "no";
+    else if (scatta.length) r.esito = r.prima ? "noinizio" : "posticipa";
+    else if (presto) r.esito = "presto";
+    else if (r.manca.length) r.esito = "manca";
+    else if (r.rip && s.pausaPiastrine) r.esito = "rivaluta";
+    else if (r.centri.length || (r.prima && s.rischio === "b")) r.esito = "centro";
+    else r.esito = "si";
+    return r;
+  }
+
+  /* ═══ STATO E PIANO ═════════════════════════════════════════════════════ */
+  function el(id) { return document.getElementById(id); }
+  function ckv(id) { var x = el(id); return !!(x && x.checked); }
+  function num(id) { var v = el(id).value; if (v === "") return null; var n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; }
+  function radio(n) { var x = document.querySelector('input[name="' + n + '"]:checked'); return x ? x.value : ""; }
+  function pgs(p) { return ' <span class="pg">' + p + "</span>"; }
+  function nota(g, t) { return '<div class="nota ' + (g || "") + '">' + t + "</div>"; }
+  function chip(k, t) { return '<span class="cat ' + k + '">' + t + "</span>"; }
+  function passo(ico, t) { return '<div class="passo"><span class="ico">' + ico + '</span><span class="tx">' + t + "</span></div>"; }
+
+  function S() {
+    return { eta:num("eta"), forma:el("forma").value, altri:radio("altri"), fc:radio("fc"), rischio:radio("rischio"),
+             fatte:num("fatte"), sett:num("sett"), pausaPiastrine:ckv("pausaPiastrine"), peso:num("peso"),
+             hb:num("hb"), hbPrec:num("hbPrec"), hbBase:num("hbBase"), uln:num("uln"), plt:num("plt"), sang:ckv("sang"),
+             egfr:num("egfr"), dialisi:ckv("dialisi"), cp:radio("cp"), preg:el("preg").value, pgi:ckv("pgi"), at:ckv("at") };
+  }
+
+  var ESITI = {
+    si:{ k:"k0", t:"Somministrare" }, posticipa:{ k:"k3", t:"Posticipare di 3 settimane" }, noinizio:{ k:"k4", t:"Non iniziare oggi" },
+    no:{ k:"k4", t:"Non somministrare" }, presto:{ k:"k3", t:"Non ancora: la dose è ogni 3 settimane" }, rivaluta:{ k:"k3", t:"Prima rivalutare beneficio e rischio" },
+    centro:{ k:"k3", t:"Decide il centro" }, manca:{ k:"kx", t:"—" }
+  };
+
+  function disegna() {
+    var s = S(), r = decidi(s), h, i;
+
+    /* eco dei campi */
+    el("vEta").textContent = s.eta === null ? "—" : (inScala(s.eta, "eta") ? (s.eta < SOGLIE.adulto ? "bambino" : "adulto") : "fuori scala");
+    el("vFatte").textContent = s.fatte === null ? "—" : (inScala(s.fatte, "fatte") && Math.floor(s.fatte) === s.fatte ? "oggi sarebbe la " + (s.fatte + 1) + "ª" : "fuori scala");
+    el("vSett").textContent = s.sett === null ? "—" : (!inScala(s.sett, "sett") ? "fuori scala" : (s.sett > SOGLIE.pausa ? "oltre 9" : (s.sett < SOGLIE.intervallo ? "sotto 3" : "3–9")));
+    el("vPeso").textContent = s.peso === null ? "—" : (inScala(s.peso, "peso") ? (s.peso < SOGLIE.pesoMin ? "sotto 30 kg" : "ok") : "fuori scala");
+    el("vHb").textContent = s.hb === null ? "—" : (inScala(s.hb, "hb") ? "ok" : "fuori scala");
+    el("vEgfr").textContent = s.egfr === null ? "—" : (inScala(s.egfr, "egfr") ? (s.egfr < SOGLIE.egfr ? "sotto 30" : "≥ 30") : "fuori scala");
+
+    /* campi che si vedono solo quando contano */
+    var haFatto = s.fatte !== null && s.fatte >= 1;
+    el("rigaSett").className = "riga" + (haFatto ? "" : " hide");
+    el("rigaPrec").className = "riga" + (s.fatte !== null && s.fatte >= 1 ? "" : " hide");
+    el("rigaBase").className = "riga" + (haFatto ? "" : " hide");
+    el("rigaPiastPausa").className = "chk" + (haFatto && s.sett !== null && s.sett > SOGLIE.pausa ? "" : " hide") + (s.pausaPiastrine ? " on" : "");
+    var chks = [["chkSang", s.sang], ["chkDial", s.dialisi], ["chkPgi", s.pgi], ["chkAt", s.at]];
+    for (i = 0; i < chks.length; i++) el(chks[i][0]).className = "chk" + (chks[i][1] ? " on" : "");
+
+    /* 1 · indicazione */
+    h = "";
+    if (r.ped) h += nota("stop", r.blocchi[0]);
+    else if (s.forma === "altro") h += nota("stop", r.blocchi[0]);
+    else {
+      if (!s.rischio) h += nota("spenta", "<b>Raccomandazione ERS 2026: —</b>. Serve lo strato di rischio al follow-up: il Tool Rischio PAH lo calcola. Non cambia la dose; alla prima dose decide se si somministra o se decide il centro.");
+      else if (s.rischio === "b") h += nota("", "<b>Rischio basso: nessuna raccomandazione, decide il centro.</b> La task force non si pronuncia per la bassa certezza delle prove" + pgs(FONTE.e14) + ". La domanda riguarda chi non lo prende ancora: non dice né di iniziare né di smettere.");
+      else h += nota("ok", "<b>ERS 2026: raccomandazione forte, certezza alta</b>, in chi prende già farmaci della PAH ed è a rischio intermedio-basso, intermedio-alto o alto al follow-up" + pgs(FONTE.e10) + ". È GRADE, non una classe ESC: la ESC/ERS 2022 lo nomina solo in fase 3, senza classe, e nessuna sua riga cambia" + pgs(FONTE.c74) + ".");
+      if (s.altri === "no") h += nota("stop", "<b>Mai trattato con farmaci della PAH:</b> sulla terapia iniziale con sotatercept i dati mancano" + pgs(FONTE.e14) + "; la scheda lo indica in associazione" + pgs(FONTE.s41) + ". Che cosa iniziare: Tool Terapia PAH.");
+      if (s.forma === "hiv" || s.forma === "port" || s.forma === "schi" || s.forma === "pvod") h += nota("", "<b>Forma non studiata.</b> Gli studi clinici non hanno incluso PAH da HIV, da ipertensione portale, da schistosomiasi né la malattia veno-occlusiva" + pgs(FONTE.s44) + "; la ERS chiede altri dati" + pgs(FONTE.e14) + ". La scheda non la controindica: decide il centro.");
+      if (s.forma === "chd") h += nota("", "<b>PAH da cardiopatia congenita, con o senza Eisenmenger:</b> poco rappresentata negli studi, servono altri dati" + pgs(FONTE.e14) + ".");
+      if (s.forma === "ctd") h += nota("", "<b>PAH da connettivopatia:</b> servono altri dati a lungo termine sul rapporto rischio-beneficio" + pgs(FONTE.e14) + "; la maggior parte dei versamenti pericardici, tamponamento compreso, è stata descritta qui" + pgs(FONTE.s48) + ".");
+    }
+    el("outInd").innerHTML = h;
+
+    /* 2 · dose */
+    h = "";
+    if (r.mgkg === null || r.ped || r.fuoriForma) h = nota("spenta", "<b>Dose: —</b>. Serve sapere quante dosi ha già fatto.");
+    else if (r.esito === "no") h = nota("stop", "<b>Dose e volume: —</b>. Per questo paziente lo strumento non dà una dose: la ragione è sotto, nell'esito. Le tabelle della scheda restano in fondo.");
+    else {
+      var oggi = r.esito === "si" ? "" : r.esito === "centro" ? " · se il centro la prescrive" : (r.esito === "manca" ? " · non ancora autorizzata: mancano dati" : " · oggi non si dà: vedi l'esito");
+      h += '<div class="esito">' + chip("k1", nf(r.mgkg) + " mg/kg") + " <span class=\"pg\">dose prevista · " + (r.prima ? "prima dose" : (r.rip ? "si riparte: pausa oltre 9 settimane" : "dose bersaglio")) + oggi + "</span></div>";
+      if (r.dose) {
+        if (r.dose.v) h += '<div class="passo"><span class="ico">mL</span><span class="tx"><span class="num">' + nf(r.dose.v.ml) + " mL</span> di soluzione a 50 mg/mL — fascia " + nv(r.dose.v.lo) + (r.dose.v.hi === Infinity ? " kg o più" : "–" + nv(r.dose.v.hi) + " kg") + ", kit con " + r.dose.v.kit + pgs("scheda, § 4.2, Tab. " + (r.mgkg === 0.3 ? "1" : "2")) + "<br>Il calcolo: " + nf(r.mgkg) + " × " + nf(r.dose.p) + " kg = <b>" + nf(r.dose.mg) + " mg</b>; il volume della tabella ne porta " + nf(r.dose.v.mgVol, 0) + ". Si inietta il volume della tabella.</span></div>";
+        else h += nota("stop", "<b>Volume: —</b>. Per questo peso la tabella della scheda non lo dà (calcolo: " + nf(r.dose.mg) + " mg).");
+      }
+      else h += nota("spenta", "<b>Volume: —</b>. Serve il peso.");
+      if (r.rip) h += nota(r.grigio ? "" : "info", "<b>Pausa oltre 9 settimane: si riparte da 0,3 mg/kg</b>, poi si risale a 0,7 mg/kg dopo aver verificato Hb e piastrine" + pgs(FONTE.s42) + "." + (r.grigio ? " <b>Lettura nostra:</b> la scheda parla di «posticipi» oltre 9 settimane senza dire da dove si contano. Dalla data prevista qui sarebbero " + nf(s.sett - SOGLIE.intervallo) + " settimane, cioè non oltre 9; dall'ultima dose " + nf(s.sett) + ". Lo strumento conta dall'ultima dose, che è la lettura più prudente." : ""));
+    }
+    el("outDose").innerHTML = h;
+
+    /* 3 · criteri */
+    h = "";
+    if (s.fatte === null) h = nota("spenta", "<b>Criteri: —</b>. Serve sapere quante dosi ha già fatto.");
+    else if (r.crit.length) {
+      var icoSt = { si:"!", no:"✓", nv:"—", na:"·" };
+      for (i = 0; i < r.crit.length; i++) {
+        var c = r.crit[i];
+        h += passo(icoSt[c.st], (c.st === "si" ? "<b>" + c.t + "</b>" : c.t) + ' <span class="pg">' + c.perche + "</span>");
+      }
+      if (r.prima) h += nota("info", "<b>Prima dose.</b> La scheda chiede Hb e piastrine prima di iniziare, e controindica l'inizio con piastrine costantemente &lt; 50 × 10⁹/L" + pgs(FONTE.s43) + ". I criteri sull'Hb sono scritti per il trattamento" + pgs(FONTE.s42) + ": un'Hb oltre 2 g/dL sopra l'ULN ferma anche la prima dose per lettura nostra, prudente.");
+    }
+    el("outCrit").innerHTML = h;
+
+    /* 4 · rene e il resto */
+    h = "";
+    if (s.egfr === null) h += nota("spenta", "<b>eGFR: —</b>. Non decide la dose: nessun aggiustamento in caso di compromissione renale" + pgs(FONTE.s42) + ".");
+    else if (!inScala(s.egfr, "egfr")) h += nota("", "<b>eGFR fuori scala</b> (1–200 mL/min/1,73 m²).");
+    else if (s.egfr < SOGLIE.egfr) h += nota("", "<b>eGFR &lt; 30 mL/min/1,73 m²: dati limitati</b>; la scheda non cambia la dose" + pgs(FONTE.s42) + ". La soglia è in eGFR: non si converte in clearance (regola del progetto).");
+    else h += nota("ok", "<b>eGFR ≥ 30:</b> nessun aggiustamento" + pgs(FONTE.s42) + ".");
+    if (s.preg === "con") h += nota("info", "<b>Età fertile:</b> test di gravidanza prima di iniziare; contraccezione efficace durante e per almeno 4 mesi dopo l'ultima dose" + pgs(FONTE.s46) + ".");
+    if (s.pgi) h += nota("", "<b>Prostaciclina in infusione:</b> piastrinopenia più frequente (dal 7,7 al 24,5% contro lo 0–3,7%) e sanguinamenti gravi più probabili" + pgs(FONTE.s44) + ". La dose non cambia.");
+    if (s.at) h += nota("", "<b>Anticoagulante o antiaggregante:</b> sanguinamenti gravi più probabili" + pgs(FONTE.s44) + "; con un anticoagulante si ripensa il rapporto rischio-beneficio prima di iniziare e all'emorragia" + pgs(FONTE.e29) + ". La dose non cambia.");
+    if (s.eta !== null && inScala(s.eta, "eta") && s.eta >= SOGLIE.eta65) h += nota("", "<b>Età ≥ 65 anni:</b> sanguinamenti gravi più probabili" + pgs(FONTE.s44) + ". La dose non cambia.");
+    if (s.plt !== null && inScala(s.plt, "plt") && s.plt >= SOGLIE.plt && (s.pgi || s.at)) h += nota("info", "Piastrine " + s.plt + " × 10⁹/L: sopra la soglia di posticipo; con queste terapie, da seguire.");
+    el("outRene").innerHTML = h;
+
+    /* esito */
+    var E = ESITI[r.esito];
+    h = '<div class="esito">' + chip(E.k, E.t) + "</div>";
+    h += '<div class="big" id="esitoGrande">' + E.t + "</div>";
+    if (r.esito === "manca") h += nota("spenta", "<b>Mancano:</b> " + r.manca.join(" · ") + ". Ognuno di questi campi decide se la dose esiste.");
+    for (i = 0; i < r.blocchi.length; i++) h += nota("stop", r.blocchi[i]);
+    if (r.scatta && r.scatta.length) {
+      var tt = [];
+      for (i = 0; i < r.scatta.length; i++) tt.push(r.scatta[i].t);
+      if (r.esito === "posticipa") h += nota("", "<b>Scatta:</b> " + tt.join(" · ") + ". Il trattamento si posticipa di 3 settimane, cioè si salta una dose; Hb e piastrine si ricontrollano prima di riprendere" + pgs(FONTE.s42) + ". La scheda non ha una dose ridotta: si gestisce col posticipo.");
+      else if (r.esito === "noinizio") h += nota("stop", "<b>Scatta:</b> " + tt.join(" · ") + ". Si ricontrolla; con piastrine costantemente &lt; 50 × 10⁹/L l'inizio è controindicato" + pgs(FONTE.s43) + ".");
+    }
+    if (r.esito === "presto") h += nota("", "<b>Sono passate " + nf(s.sett) + " settimane.</b> La scheda dà una dose ogni 3 settimane" + pgs(FONTE.s42) + ": si aspetta la data prevista.");
+    if (r.esito === "rivaluta") h += nota("", "<b>Pausa oltre 9 settimane per piastrine costantemente &lt; 50 × 10⁹/L:</b> prima di riprendere il medico rivaluta beneficio e rischio per il paziente" + pgs(FONTE.s42) + ". Se si riprende, 0,3 mg/kg.");
+    if (r.esito === "centro" && r.prima && s.rischio === "b") h += nota("", "<b>Rischio basso, prima dose:</b> la ERS 2026 non dà una raccomandazione" + pgs(FONTE.e14) + ". I criteri della scheda non si oppongono: la decisione è del centro, e la dose sopra vale se il centro la prescrive.");
+    for (i = 0; i < r.centri.length; i++) h += nota("", r.centri[i]);
+    if (r.esito === "centro") h += nota("info", "<b>Se il centro la prescrive:</b> " + nf(r.mgkg) + " mg/kg" + (r.dose && r.dose.v ? ", <b>" + nf(r.dose.v.ml) + " mL</b>, kit con " + r.dose.v.kit : "") + pgs("scheda, § 4.2, Tab. " + (r.mgkg === 0.3 ? "1" : "2")) + ". Nessuno dei quattro criteri di posticipo scatta.");
+    if (r.esito === "si") {
+      h += nota("ok", "<b>Nessuno dei quattro criteri di posticipo scatta</b>" + pgs(FONTE.s42) + ". Dose: <b>" + nf(r.mgkg) + " mg/kg</b>" + (r.dose && r.dose.v ? ", <b>" + nf(r.dose.v.ml) + " mL</b>, kit con " + r.dose.v.kit : "") + ". Sottocute: addome ad almeno 5 cm dall'ombelico, braccio o coscia, mai la stessa sede due volte di fila" + pgs("scheda, § 4.2") + ".");
+      if (s.rischio === "b") h += nota("", "A basso rischio la ERS 2026 non si pronuncia: la scelta di proseguire è del centro" + pgs(FONTE.e14) + ".");
+    }
+    for (i = 0; i < r.avvisi.length; i++) h += nota("", r.avvisi[i]);
+    el("outEsito").innerHTML = h;
+
+    /* dopo */
+    h = "";
+    if (r.esito === "posticipa") {
+      h += passo("→", "<b>Fra 3 settimane</b>, dopo aver ricontrollato Hb e piastrine" + pgs(FONTE.s42) + ".");
+      if (s.sett !== null && s.sett + SOGLIE.intervallo > SOGLIE.pausa) h += nota("", "Se si salta anche questa, dall'ultima dose saranno " + nf(s.sett + SOGLIE.intervallo) + " settimane: <b>oltre 9 si riparte da 0,3 mg/kg</b>" + pgs(FONTE.s42) + ".");
+      if (r.scatta && (r.scatta[0].id !== "c4" || r.scatta.length > 1)) h += passo("!", "Eritrocitosi: un aumento severo può portare eventi tromboembolici e iperviscosità; si può rivalutare la tecnica di somministrazione del paziente o di chi lo aiuta" + pgs(FONTE.s44) + ".");
+    }
+    else if (r.esito === "si" || r.esito === "rivaluta" || r.esito === "centro") {
+      if (r.mgkg === 0.3) h += passo("→", "<b>Fra 3 settimane 0,7 mg/kg</b>, dopo aver verificato che Hb e piastrine siano accettabili" + pgs(FONTE.s42) + ".");
+      else h += passo("→", "<b>Fra 3 settimane</b> ancora 0,7 mg/kg" + pgs(FONTE.s42) + ".");
+    }
+    if (s.fatte !== null && inScala(s.fatte, "fatte")) {
+      if (s.fatte < 5) h += passo("Hb", "Questa è la " + (s.fatte + 1) + "ª: <b>Hb e piastrine prima di ognuna delle prime 5 dosi</b>, o più a lungo se instabili" + pgs(FONTE.s42) + ".");
+      else h += passo("Hb", "Oltre le prime 5 dosi: <b>Hb e piastrine ogni 3–6 mesi</b>, se i valori sono stabili" + pgs(FONTE.s42) + ". Lo strumento non verifica quanto è vecchio il valore inserito.");
+    }
+    if (r.prima) h += passo("0", "<b>Prima di iniziare:</b> test di gravidanza nelle donne in età fertile" + pgs(FONTE.s46) + "; ecocardiogramma per il versamento pericardico, ed eco con soluzione salina agitata per le dilatazioni intrapolmonari; ripensare l'eventuale anticoagulante" + pgs(FONTE.e29) + ".");
+    h += passo("·", "<b>Da seguire:</b> sanguinamenti, compresa l'epistassi; teleangectasie; versamento pericardico, anche con tamponamento, soprattutto con connettivopatia o versamento preesistente; shunt intrapolmonare destro-sinistro con ipossiemia che peggiora nonostante l'emodinamica migliori; pressione arteriosa, che sale di pochi mmHg" + pgs(FONTE.s48) + ". Gestione suggerita, dall'osservazione alla sospensione" + pgs(FONTE.e29) + ".");
+    h += passo("·", "<b>Dose dimenticata:</b> il prima possibile; oltre 3 giorni dalla data prevista si sposta il calendario per tenere le 3 settimane" + pgs(FONTE.s42) + ".");
+    h += passo("·", "Interazioni: nessuno studio" + pgs("scheda tecnica di sotatercept, § 4.5") + ". Gli altri farmaci della PAH e le loro dosi: Tool Farmaci PAH.");
+    el("outPoi").innerHTML = h;
+
+    /* tabelle */
+    function tabella(T, mgkg, tit) {
+      var t = '<details class="pieg"' + (r.mgkg === mgkg ? " open" : "") + "><summary>" + tit + '</summary><table class="tab"><tr><th>Peso, kg</th><th>Volume</th><th>Kit</th></tr>', j;
+      for (j = 0; j < T.length; j++) {
+        var on = r.dose && r.dose.v && r.mgkg === mgkg && r.dose.v.lo === T[j][0];
+        t += "<tr" + (on ? ' class="on"' : "") + '><td class="n">' + nv(T[j][0]) + (T[j][1] === Infinity ? " o più" : "–" + nv(T[j][1])) + '</td><td class="n">' + nf(T[j][2]) + " mL</td><td>" + T[j][3] + "</td></tr>";
+      }
+      return t + "</table></details>";
+    }
+    el("outTab").innerHTML = tabella(VOL03, 0.3, "0,3 mg/kg — Tab. 1, § 4.2") + tabella(VOL07, 0.7, "0,7 mg/kg — Tab. 2, § 4.2") + '<p class="pg" style="margin-top:6px">Soluzione ricostituita 50 mg/mL. Sotto 30,0 kg nessuna tabella; a 0,7 mg/kg l\'ultima fascia, 2,4 mL, vale anche oltre 167,5 kg.</p>';
+
+    /* incoerenze */
+    h = "";
+    h += nota(s.plt !== null ? "" : "spenta", "<b>Piastrine nella Tab. 2 della ERS 2026.</b> La nota stampa «&lt; 50,000 ×10^9/L»" + pgs("ERS 2026, p. 30") + ": così scritta l'unità non torna. Vale la scheda, &lt; 50 × 10⁹/L" + pgs(FONTE.s42) + ".");
+    h += nota(r.esito === "posticipa" ? "" : "spenta", "<b>«Modifica della dose».</b> La Tab. 2 della ERS 2026 suggerisce sospensione o modifica della dose" + pgs(FONTE.e29) + "; la scheda non ha una dose ridotta intermedia: il suo aggiustamento è il posticipo" + pgs(FONTE.s42) + ".");
+    h += nota((s.hb !== null && s.uln !== null && d2(s.hb - s.uln) === SOGLIE.hbUln) ? "" : "spenta", "<b>Hb esattamente 2 g/dL sopra l'ULN.</b> La scheda dice «&gt; 2 g/dL»" + pgs(FONTE.s42) + "; la nota della Tab. 2 della ERS 2026 dice «to 2 g/dL above»" + pgs("ERS 2026, p. 30") + ". Qui vale la scheda: a 2,0 esatti il criterio non scatta.");
+    h += nota(s.cp && s.cp !== "0" ? "" : "spenta", "<b>Fegato.</b> La scheda dice insieme «nessun aggiustamento» (Child-Pugh da A a C) e «non è stato studiato»" + pgs(FONTE.s42) + ". Esito «decide il centro», con la dose accanto se il centro la prescrive: decisione del medico, 01/11/2026.");
+    h += nota(r.grigio ? "" : "spenta", "<b>«Posticipi» oltre 9 settimane.</b> La scheda non dice se si contano dalla data prevista o dall'ultima dose" + pgs(FONTE.s42) + ". Qui dall'ultima dose: più prudente, e lettura nostra.");
+    h += nota("spenta", "<b>Sanguinamento grave.</b> La scheda scrive che non va somministrato, senza dire per quanto" + pgs(FONTE.s44) + "; la ERS parla di sospensione temporanea o definitiva" + pgs(FONTE.e29) + ": quando riprendere lo decide il centro.");
+    el("outInc").innerHTML = h;
+
+    /* limiti */
+    var lim = [];
+    lim.push("È il controllo della singola somministrazione: indicare il farmaco, e quando, spetta al centro. Dove entra nella strategia: Tool Terapia PAH.");
+    lim.push("Sotto 30 kg nessun volume; sotto i 18 anni nessuna dose. Rene in eGFR, come la scheda, senza conversione.");
+    lim.push("Criteri di posticipo con i soli numeri della scheda, in g/dL (2 g/dL = 1,24 mmol/L, 4 g/dL = 2,48 mmol/L). Un'Hb in mmol/L va prima convertita.");
+    lim.push("Child-Pugh A–C e dialisi: la scheda dice «non studiato» o non ha uno schema, e insieme nessun aggiustamento: decide il centro, con la dose accanto se la prescrive (decisione del medico, 01/11/2026).");
+    lim.push("Le forme escluse dagli studi (HIV, ipertensione portale, schistosomiasi, PVOD): alla prima dose decide il centro; a chi è già in terapia la dose resta, con la nota (decisione del medico, 01/11/2026).");
+    if (s.rischio === "") lim.push(r.prima ? "Strato di rischio non indicato: alla prima dose niente esito, perché a rischio basso decide il centro." : "Strato di rischio non indicato: la riga della ERS 2026 resta «—»; la dose di chi è già in terapia no.");
+    if (s.fatte !== null && s.fatte >= 5) lim.push("Oltre la 5ª dose lo strumento usa l'ultimo controllo che gli dai: non può sapere se è entro i 3–6 mesi.");
+    lim.push("Disponibilità in Italia: Banca dati AIFA al 27/10/2026; cambia in fretta.");
+    el("limiti").innerHTML = "<li>" + lim.join("</li><li>") + "</li>";
+
+    /* barra */
+    function bar(id, k, x) { var b = el(id); b.className = "cat " + k; b.innerHTML = x; }
+    bar("barEsito", E.k, E.t);
+    var mostra = (r.esito === "si" || r.esito === "centro" || r.esito === "rivaluta") && r.mgkg !== null;
+    bar("barDose", mostra ? "k1" : "kx", mostra ? nf(r.mgkg) + " mg/kg" : "—");
+    bar("barVol", mostra && r.dose && r.dose.v ? "k1" : "kx", mostra && r.dose && r.dose.v ? nf(r.dose.v.ml) + " mL" : "—");
+  }
+
+  document.addEventListener("input", disegna);
+  document.addEventListener("change", disegna);
+  el("azzera").addEventListener("click", function () {
+    var ins = document.querySelectorAll("input"), i;
+    for (i = 0; i < ins.length; i++) {
+      if (ins[i].type === "checkbox" || ins[i].type === "radio") ins[i].checked = false;
+      else ins[i].value = "";
+    }
+    el("forma").value = ""; el("preg").value = "";
+    disegna();
+    window.scrollTo(0, 0);
+  });
+
+  window.SOT_MOTORE = { volume:volume, criteri:criteri, decidi:decidi, VOL03:VOL03, VOL07:VOL07, SOGLIE:SOGLIE };
+  disegna();
+})();
+</script>
+<script data-iphone="web">
+// Solo da un indirizzo https, cioe' dalla pagina pubblicata: aperto come file
+// il tool non cerca ne' manifest ne' service worker, che accanto al file non
+// ci sono. Un errore qui non deve fermare niente: e' un di piu'.
+(function(){
+if(location.protocol!=="https:") return;
+try{
+  var t=document.getElementsByTagName("head")[0];
+  var m=document.createElement("link"); m.rel="manifest"; m.href="manifest.webmanifest";
+  var i=document.createElement("link"); i.rel="apple-touch-icon"; i.href="icona-180.png";
+  t.appendChild(m); t.appendChild(i);
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js")["catch"](function(){});
+}catch(e){}
+})();
+</script>
+<script data-iphone="fine">document.documentElement.className+=" motore-ok";</script>
+</body>
+</html>
